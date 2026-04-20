@@ -1,10 +1,45 @@
 <script lang="ts">
+    import type {Nullable} from "$lib/shared.svelte";
+
     const handlePublish = (e: Event) => {
         if (e instanceof KeyboardEvent && e.key !== 'Enter') {
             return;
         }
 
         // TODO now: publish
+    }
+
+    // TODO now: think of best interaction logic
+    let titleInput = $state<Nullable<HTMLInputElement>>(null);
+    let editorArea = $state<Nullable<HTMLTextAreaElement>>(null);
+    const handleTitleInputKeys = (e: KeyboardEvent) => {
+        if (e.key === "Enter") {
+            if (!editorArea) return;
+
+            e.preventDefault();
+            editorArea.focus();
+            editorArea.setSelectionRange(editorArea.value.length, editorArea.value.length);
+        }
+        if (e.key === "ArrowDown") {
+            if (!editorArea) return;
+
+            editorArea.focus();
+            editorArea.setSelectionRange(editorArea.value.length, editorArea.value.length);
+        }
+    }
+
+    const isAtFirstLine = (textarea: HTMLTextAreaElement) => {
+        const firstNewLine = textarea.value.indexOf("\n");
+        return firstNewLine === -1 || textarea.selectionStart <= firstNewLine;
+    }
+
+    const handleEditorKeys = (e: KeyboardEvent) => {
+        if (!editorArea || !titleInput) return;
+        if (e.key === "ArrowUp" && isAtFirstLine(editorArea)) {
+            e.preventDefault();
+            titleInput.focus();
+            titleInput.setSelectionRange(titleInput.value.length, titleInput.value.length);
+        }
     }
 </script>
 
@@ -21,8 +56,8 @@
         <main>
             <section class="editor-seg">
                 <!-- TODO: 間もなく make these random -->
-                <input class="font-lexend" type="text" maxlength="32" id="title-input" placeholder="Title goes here...">
-                <textarea id="editor-area" placeholder="Write something..."></textarea>
+                <input bind:this={titleInput} onkeydown={handleTitleInputKeys} class="font-lexend" type="text" maxlength="32" id="title-input" placeholder="Title goes here...">
+                <textarea bind:this={editorArea} onkeydown={handleEditorKeys} id="editor-area" placeholder="Write something..."></textarea>
             </section>
             <section class="publish-seg">
                 <button class="publish" aria-label="publish" onclick={handlePublish}>
