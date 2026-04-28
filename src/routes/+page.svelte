@@ -9,36 +9,22 @@
         // TODO now: publish
     }
 
-    // TODO now: think of best interaction logic
-    let titleInput = $state<Nullable<HTMLInputElement>>(null);
-    let editorArea = $state<Nullable<HTMLTextAreaElement>>(null);
-    const handleTitleInputKeys = (e: KeyboardEvent) => {
-        if (e.key === "Enter") {
+    let editorArea = $state<Nullable<HTMLDivElement>>(null);
+    const handlePublishInputKeys = (e: KeyboardEvent) => {
+        if (e.key === "ArrowUp") {
             if (!editorArea) return;
 
-            e.preventDefault();
-            editorArea.focus();
-            editorArea.setSelectionRange(editorArea.value.length, editorArea.value.length);
-        }
-        if (e.key === "ArrowDown") {
-            if (!editorArea) return;
+            const range = document.createRange();
+            const selection = window.getSelection();
 
             editorArea.focus();
-            editorArea.setSelectionRange(editorArea.value.length, editorArea.value.length);
-        }
-    }
+            range.selectNodeContents(editorArea);
+            range.collapse(false);
+            if (!selection) return;
+            selection.removeAllRanges();
+            selection.addRange(range);
 
-    const isAtFirstLine = (textarea: HTMLTextAreaElement) => {
-        const firstNewLine = textarea.value.indexOf("\n");
-        return firstNewLine === -1 || textarea.selectionStart <= firstNewLine;
-    }
-
-    const handleEditorKeys = (e: KeyboardEvent) => {
-        if (!editorArea || !titleInput) return;
-        if (e.key === "ArrowUp" && isAtFirstLine(editorArea)) {
             e.preventDefault();
-            titleInput.focus();
-            titleInput.setSelectionRange(titleInput.value.length, titleInput.value.length);
         }
     }
 </script>
@@ -56,18 +42,25 @@
         <main>
             <section class="editor-seg">
                 <!-- TODO: 間もなく make these random -->
-                <input bind:this={titleInput} onkeydown={handleTitleInputKeys} class="font-lexend" type="text" maxlength="32" id="title-input" placeholder="Title goes here...">
-                <textarea bind:this={editorArea} onkeydown={handleEditorKeys} id="editor-area" placeholder="Write something..."></textarea>
+                <!-- TODO: use lib for WYSIWYG, Editor.js? (or do it myself (suicide?)) -->
+                <div contenteditable="true" bind:this={editorArea} id="editor-area">
+                    Write something...
+                </div>
             </section>
             <section class="publish-seg">
                 <button class="publish" aria-label="publish" onclick={handlePublish}>
                     Publish
                 </button>
+                <input onkeydown={handlePublishInputKeys}
+                       autocomplete="off" type="text" maxlength="32" id="slug-input" placeholder="Custom url">
+                <input onkeydown={handlePublishInputKeys}
+                       autocomplete="off" type="text" maxlength="32" id="slug-input" placeholder="Custom url">
+
                 <p>Your link: <span>ewewewe</span></p>
             </section>
         </main>
         <footer>
-            © 2026 i consume yuri media to survive
+            © 2026 Lethargistic. I licked it, it's mine.
         </footer>
     </div>
 </div>
@@ -92,33 +85,24 @@
 
             & main {
                 & .editor-seg {
-                    & #title-input {
-                        font-size: 3rem;
-                        padding: 2rem 0 0 0;
-
-                        font-weight: 350;
-
-                        text-overflow: ellipsis;
-                        overflow-y: auto;
-                    }
+                    height: 100vh;
+                    padding: 2.5rem 0.15rem 0;
+                    box-sizing: border-box;
 
                     & #editor-area {
-                        min-height: 100vh;
-                        padding: 2.5rem 0.15rem 0;
+                        all: unset;
+                        resize: none;
+
+                        width: 100%;
+                        min-height: 100%;
 
                         font-size: 1.5rem;
 
-                        resize: none;
-                    }
-
-                    & textarea, input {
-                        all: unset;
-                        width: 100%;
                         white-space: pre-wrap;
                         overflow-wrap: break-word;
                     }
 
-                    & textarea,input:focus-visible {
+                    & #editor-area:focus-visible {
                         outline: none !important;
                     }
                 }
