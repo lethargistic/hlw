@@ -30,6 +30,8 @@
 		"vitest-browser-svelte": "^2.0.2"
 	},
 	"dependencies": {
+		"@editorjs/editorjs": "^2.31.6",
+		"@editorjs/list": "^2.0.9",
 		"@supabase/ssr": "^0.10.0",
 		"@supabase/supabase-js": "^2.101.1"
 	}

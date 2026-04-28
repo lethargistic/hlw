@@ -1,5 +1,34 @@
 <script lang="ts">
-    import type {Nullable} from "$lib/shared.svelte";
+    import {absc, type Nullable} from "$lib/shared.svelte";
+    import type EditorJS from "@editorjs/editorjs";
+    import type {BlockToolConstructable} from "@editorjs/editorjs";
+    import {onMount} from "svelte";
+    import Header from '@editorjs/header';
+    import List from '@editorjs/list';
+
+    let editor: Nullable<EditorJS>;
+
+    // TODO soon: configure, add more plugins, make it proper
+    // TODO soon: i18n
+    // TODO soon: data saving
+    // TODO soon: data loading w data prop
+    onMount(async () => {
+        const EditorJS = (await import("@editorjs/editorjs")).default;
+
+        editor = new EditorJS({
+            holder: "editor-area",
+            placeholder: "Write something...",
+            autofocus: true,
+
+            tools: {
+                header: {
+                    class: absc<BlockToolConstructable>(Header),
+                    inlineToolbar: ['link']
+                },
+                list: List
+            }
+        });
+    })
 
     const handlePublish = (e: Event) => {
         if (e instanceof KeyboardEvent && e.key !== 'Enter') {
@@ -10,7 +39,7 @@
     }
 
     let editorArea = $state<Nullable<HTMLDivElement>>(null);
-    const handlePublishInputKeys = (e: KeyboardEvent) => {
+    const handlePublishInputKeys = async (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
             if (!editorArea) return;
 
@@ -42,9 +71,7 @@
         <main>
             <section class="editor-seg">
                 <!-- TODO: 間もなく make these random -->
-                <!-- TODO: use lib for WYSIWYG, Editor.js? (or do it myself (suicide?)) -->
-                <div contenteditable="true" bind:this={editorArea} id="editor-area">
-                    Write something...
+                <div bind:this={editorArea} contenteditable="true" id="editor-area">
                 </div>
             </section>
             <section class="publish-seg">
@@ -52,7 +79,7 @@
                     Publish
                 </button>
                 <input onkeydown={handlePublishInputKeys}
-                       autocomplete="off" type="text" maxlength="32" id="slug-input" placeholder="Custom url">
+                       autocomplete="off" type="text" maxlength="32" id="edit-code-input" placeholder="Custom edit code">
                 <input onkeydown={handlePublishInputKeys}
                        autocomplete="off" type="text" maxlength="32" id="slug-input" placeholder="Custom url">
 
@@ -66,6 +93,12 @@
 </div>
 
 <style>
+    :global {
+        .ce-block__content {
+            margin: 0 0;
+        }
+    }
+
     .full-wrap {
         display: grid;
         place-items: center;

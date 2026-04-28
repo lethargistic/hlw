@@ -1,6 +1,7 @@
 
 - [ ] todo now: ui
-- [ ] todo now: Editor.js?
+- [x] todo now: Editor.js?
+- [ ] todo now: finish editor
 - [ ] todo now: db
 - [ ] todo now: accounts
 - [ ] todo now: make title text alternate, come up with a lot of these

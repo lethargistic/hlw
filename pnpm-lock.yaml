@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@editorjs/editorjs':
+        specifier: ^2.31.6
+        version: 2.31.6
+      '@editorjs/list':
+        specifier: ^2.0.9
+        version: 2.0.9
       '@supabase/ssr':
         specifier: ^0.10.0
         version: 0.10.0(@supabase/supabase-js@2.101.1)
@@ -59,6 +65,24 @@ packages:
 
   '@blazediff/core@1.9.1':
     resolution: {integrity: sha512-ehg3jIkYKulZh+8om/O25vkvSsXXwC+skXmyA87FFx6A/45eqOkZsBltMw/TVteb0mloiGT8oGRTcjRAz66zaA==}
+
+  '@codexteam/icons@0.3.3':
+    resolution: {integrity: sha512-cp7mkZPgmBuSxigTm3Vb+DtVHYeX7qXfQd7o05vcLD8Ag5WvRlol2QSn5P10k0CDAJwmkH9nQGQLBycErS9lsQ==}
+
+  '@editorjs/caret@1.1.0':
+    resolution: {integrity: sha512-dzUjrPV7mtqM0HR/7IwT1/1PfyMxUfe5MRXo9joFmBRDIcrQ5ikbqVxSL9+Hy5tQ+BUWBwqLUgX1UKTJylWW9Q==}
+
+  '@editorjs/dom@1.1.0':
+    resolution: {integrity: sha512-aH8OeS3DXCDG2WP6yt/uS6Z9PstrA3Re930boIilxtMdF7Ht+pKJrq3OJnd7OCMPVO/y7UOAmtHNesVx6v4K2g==}
+
+  '@editorjs/editorjs@2.31.6':
+    resolution: {integrity: sha512-j2nxuFCD3DnoJDUD0hPO5tirpuQ6sWmmuHATl3EI7fG1it3Ml7jk0WJtu3E+TRLBd7zfNeJhDThbP3LnBEn2GA==}
+
+  '@editorjs/helpers@1.2.1':
+    resolution: {integrity: sha512-y0BgHG/RT4a7hNPWxNpTIXgo1GlUrwzyngWMTVqe4DITUzMCqQ5gBfMvOwbKpNWwgQiL+ekDT1VNFVchAhtpKg==}
+
+  '@editorjs/list@2.0.9':
+    resolution: {integrity: sha512-rUTgDSt5wygD3Dp24bNyp6vvye/Xf4UWju0ZuvWeP13Z4cu2z1Jb5JFSTEhCou72XUGuf4xVhtsd8cm/bwUS1g==}
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -780,6 +804,12 @@ packages:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
     engines: {node: '>=6'}
 
+  codex-notifier@1.1.2:
+    resolution: {integrity: sha512-DCp6xe/LGueJ1N5sXEwcBc3r3PyVkEEDNWCVigfvywAkeXcZMk9K41a31tkEFBW0Ptlwji6/JlAb49E3Yrxbtg==}
+
+  codex-tooltip@1.0.5:
+    resolution: {integrity: sha512-IuA8LeyLU5p1B+HyhOsqR6oxyFQ11k3i9e9aXw40CrHFTRO2Y1npNBVU3W1SvhKAbUU7R/YikUBdcYFP0RcJag==}
+
   commander@11.1.0:
     resolution: {integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==}
     engines: {node: '>=16'}
@@ -1252,6 +1282,30 @@ packages:
 snapshots:
 
   '@blazediff/core@1.9.1': {}
+
+  '@codexteam/icons@0.3.3': {}
+
+  '@editorjs/caret@1.1.0':
+    dependencies:
+      '@editorjs/dom': 1.1.0
+
+  '@editorjs/dom@1.1.0':
+    dependencies:
+      '@editorjs/helpers': 1.2.1
+
+  '@editorjs/editorjs@2.31.6':
+    dependencies:
+      '@editorjs/caret': 1.1.0
+      codex-notifier: 1.1.2
+      codex-tooltip: 1.0.5
+
+  '@editorjs/helpers@1.2.1':
+    dependencies:
+      codex-tooltip: 1.0.5
+
+  '@editorjs/list@2.0.9':
+    dependencies:
+      '@codexteam/icons': 0.3.3
 
   '@esbuild/aix-ppc64@0.25.12':
     optional: true
@@ -1832,6 +1886,10 @@ snapshots:
   chownr@3.0.0: {}
 
   clsx@2.1.1: {}
+
+  codex-notifier@1.1.2: {}
+
+  codex-tooltip@1.0.5: {}
 
   commander@11.1.0: {}
 
