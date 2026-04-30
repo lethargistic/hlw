@@ -1,16 +1,20 @@
-<script>
+<script lang="ts">
     import { onMount, onDestroy } from 'svelte'
     import { Editor } from '@tiptap/core'
     import { StarterKit } from '@tiptap/starter-kit'
     import BubbleMenu from '@tiptap/extension-bubble-menu'
+    import type {Nullable} from "$lib/shared.svelte";
 
-    let bubbleMenu = $state()
-    let element = $state()
-    let editorState = $state({editor: null})
+    // TODO now: prettify
+
+    let { elem = $bindable<Nullable<HTMLElement>>(null)} = $props();
+
+    let bubbleMenu = $state<Nullable<HTMLElement>>()
+    let editorState = $state<Record<string, Nullable<Editor>>>({editor: null})
 
     onMount(() => {
         editorState.editor = new Editor({
-            element: element,
+            element: elem,
             extensions: [
                 StarterKit,
                 BubbleMenu.configure({
@@ -37,18 +41,18 @@
     {#if editorState.editor}
         <div class="fixed-menu">
             <button
-                    onclick={() => editorState.editor.chain().focus().toggleHeading({ level: 1 }).run()}
+                    onclick={() => editorState.editor?.chain().focus().toggleHeading({ level: 1 }).run()}
                     class:active={editorState.editor.isActive('heading', { level: 1 })}
             >
                 H1
             </button>
             <button
-                    onclick={() => editorState.editor.chain().focus().toggleHeading({ level: 2 }).run()}
+                    onclick={() => editorState.editor?.chain().focus().toggleHeading({ level: 2 }).run()}
                     class:active={editorState.editor.isActive('heading', { level: 2 })}
             >
                 H2
             </button>
-            <button onclick={() => editorState.editor.chain().focus().setParagraph().run()} class:active={editorState.editor.isActive('paragraph')}>
+            <button onclick={() => editorState.editor?.chain().focus().setParagraph().run()} class:active={editorState.editor.isActive('paragraph')}>
                 P
             </button>
         </div>
@@ -56,19 +60,19 @@
 
     <div class="bubble-menu" bind:this="{bubbleMenu}">
         {#if editorState.editor}
-            <button onclick={() => editorState.editor.chain().focus().toggleBold().run()} class:active={editorState.editor.isActive('bold')}>
+            <button onclick={() => editorState.editor?.chain().focus().toggleBold().run()} class:active={editorState.editor.isActive('bold')}>
                 Bold
             </button>
-            <button onclick={() => editorState.editor.chain().focus().toggleItalic().run()} class:active={editorState.editor.isActive('italic')}>
+            <button onclick={() => editorState.editor?.chain().focus().toggleItalic().run()} class:active={editorState.editor.isActive('italic')}>
                 Italic
             </button>
-            <button onclick={() => editorState.editor.chain().focus().toggleStrike().run()} class:active={editorState.editor.isActive('strike')}>
+            <button onclick={() => editorState.editor?.chain().focus().toggleStrike().run()} class:active={editorState.editor.isActive('strike')}>
                 Strike
             </button>
         {/if}
     </div>
 
-    <div bind:this={element}></div>
+    <div bind:this={elem}></div>
 </div>
 
 <style lang="scss">

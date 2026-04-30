@@ -1,17 +1,12 @@
 <script lang="ts">
     import {type Nullable} from "$lib/shared.svelte";
-    import {onMount} from "svelte";
     import Editor from "$lib/components/Editor.svelte";
 
-    // TODO now: probably switch to a more classic editor
     // TODO soon: configure, add more plugins, make it proper
     // TODO soon: i18n
     // TODO soon: data saving
-    // TODO soon: data loading w data prop
+    // TODO soon: data loading
     // TODO soon: link tool
-    onMount(async () => {
-
-    })
 
     const handlePublish = (e: Event) => {
         if (e instanceof KeyboardEvent && e.key !== 'Enter') {
@@ -21,16 +16,25 @@
         // TODO now: publish
     }
 
-    let editorArea = $state<Nullable<HTMLDivElement>>(null);
+    let editorAreaContElem = $state<Nullable<HTMLDivElement>>(null);
+    let editorContentEditElem = $state<Nullable<HTMLDivElement>>(null)
+    $effect(() => {
+        editorContentEditElem =
+            editorAreaContElem?.firstElementChild as Nullable<HTMLDivElement>;
+    });
+
+    $inspect(editorAreaContElem);
+    $inspect('edit', editorContentEditElem);
+
     const handlePublishInputKeys = async (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
-            if (!editorArea) return;
+            if (!editorContentEditElem) return;
 
             const range = document.createRange();
             const selection = window.getSelection();
 
-            editorArea.focus();
-            range.selectNodeContents(editorArea);
+            editorContentEditElem.focus();
+            range.selectNodeContents(editorContentEditElem);
             range.collapse(false);
             if (!selection) return;
             selection.removeAllRanges();
@@ -53,10 +57,9 @@
         </header>
         <main>
             <section class="editor-seg">
-                <!-- TODO: 間もなく make these random -->
+                <!-- TODO: 間もなく make placeholders random -->
                 <div class="editor-wrap">
-                    <Editor />
-                    <div bind:this={editorArea} id="editor-area"></div>
+                    <Editor bind:elem={editorAreaContElem}/>
                 </div>
             </section>
             <section class="publish-seg">
@@ -80,36 +83,6 @@
 </div>
 
 <style>
-    :global {
-        .ce-block__content,
-        .ce-toolbar__content {
-            max-width: unset;
-        }
-
-        .ce-popover {
-            --color-background: var(--background-color) !important;
-            --color-text-primary: var(--text-color) !important;
-        }
-
-        .ce-toolbar__plus, .ce-toolbar__settings-btn {
-            color: var(--text-color);
-            border-radius: 4px;
-        }
-
-        .ce-toolbar__plus:hover, .ce-toolbar__settings-btn:hover {
-            background-color: var(--accent-primary);
-            color: var(--background-color);
-        }
-
-        .cdx_block:focus-visible {
-            outline: none !important;
-        }
-
-        .codex-editor__redactor {
-            padding-bottom: 3rem !important;
-        }
-    }
-
     .full-wrap {
         display: grid;
         place-items: center;
