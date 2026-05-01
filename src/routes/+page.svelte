@@ -1,7 +1,8 @@
 <script lang="ts">
-    import {type Nullable} from "$lib/shared.svelte";
+    import {type Nullable, postSchema} from "$lib/shared.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import {createPost} from "./post.remote.ts";
+    import type {RemoteFormField} from "@sveltejs/kit";
 
     // TODO soon: configure, add more plugins, make it proper
     // TODO soon: i18n
@@ -35,8 +36,6 @@
     }
 
     let editorJSON = $state<object | null>();
-
-    $inspect(editorJSON)
 </script>
 
 <div class="full-wrap">
@@ -56,26 +55,35 @@
                     <Editor bind:elem={editorAreaContElem} bind:editorJSON={editorJSON}/>
                 </div>
             </section>
+
+            {#snippet fieldError(field: RemoteFormField<string>)}
+                {#each field.issues() as issue}
+                    <span class="field-error">{issue.message}</span>
+                {/each}
+            {/snippet}
             <section class="post-seg">
-                <form class="post-inputs" {...createPost}>
+                <form class="post-inputs" {...createPost.preflight(postSchema)}
+                      oninput={() => createPost.validate()}>
                     <label>
+                        {@render fieldError(createPost.fields.slug)}
                         <input onkeydown={handlePostInputKeys}
                                autocomplete="off"
-                               maxlength="32"
                                id="slug-input"
                                placeholder="Custom url"
                                {...createPost.fields.slug.as('text')}
                         >
                     </label>
                     <label>
+                        {@render fieldError(createPost.fields._edit_code)}
                         <input onkeydown={handlePostInputKeys}
-                               autocomplete="off" maxlength="32" id="edit-code-input"
+                               autocomplete="off" id="edit-code-input"
                                placeholder="Custom edit code"
-                               {...createPost.fields.edit_code.as('text')}
+                               {...createPost.fields._edit_code.as('text')}
                         >
                     </label>
                     <input type="hidden" {...createPost.fields.content.as('text', JSON.stringify(editorJSON))}>
-                    <button class="post-btn" onclick={() => console.log('post')}>
+                    {@render fieldError(createPost.fields.content)}
+                    <button tabindex="0" class="post-btn">
                         Post
                     </button>
                 </form>
@@ -133,6 +141,21 @@
                     & .post-inputs {
                         display: flex;
                         gap: 0.5rem;
+
+                        --input-height: 1rem;
+
+                        & label {
+                            position: relative;
+                        }
+
+                        & .field-error {
+                            position: absolute;
+                            bottom: calc(var(--input-height) + 0.5rem);
+                        }
+
+                        & post-input {
+                            height: var(--input-height);
+                        }
 
                         & .post-btn {
                             margin-left: auto;

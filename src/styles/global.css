@@ -78,9 +78,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /*KEYBOARD FOCUS*/
-:focus-visible {
-    outline: 1px solid black;
-    outline-offset: 2px;
+*:focus-visible {
+    outline: 1px solid white !important;
+    outline-offset: 1px;
 }
 
 :focus {

@@ -15,7 +15,7 @@ const limiter = getLimiter(5, 60);
 // TODO now: validate schema on client
 export const createPost = form(
     postSchema,
-    async ({slug, edit_code, content}) => {
+    async ({slug, _edit_code, content}, issue) => {
         // rate limiting
         const ip = getRequestEvent().getClientAddress();
         const { success } = await limiter.limit(ip)
@@ -31,26 +31,22 @@ export const createPost = form(
                 .eq('slug', finalSlug)
                 .single()
 
-            if (exists) return invalid('Slug already exists')
-            if (error && error.code !== 'PGRST116') sverror(500, {message: 'Couldn\'t check slug'})
+            if (exists) return invalid(issue.slug('Url taken'));
+            if (error && error.code !== 'PGRST116') sverror(500, { message: 'Couldn\'t check slug'} );
         }
 
         // custom slug
         const customSlug = Boolean(slug);
 
         // edit code
-        const finalEditCode = edit_code || generateToken(10);
-
-        // TODO now: validate edit code len on client
-        if (edit_code && edit_code.length < MIN_CUSTOM_EDIT_CODE_LEN)
-            return invalid('Edit code too short')
+        const finalEditCode = _edit_code || generateToken(10);
 
         // content
         let checker;
         try {
             checker = schema.nodeFromJSON(content);
         } catch {
-            return invalid('Invalid text')
+            return invalid(issue.content('Invalid text'))
         }
 
         // it's loseless right?
@@ -61,7 +57,7 @@ export const createPost = form(
             .insert({
                 slug: finalSlug,
                 custom_slug: customSlug,
-                edit_code: finalEditCode,
+                _edit_code: finalEditCode,
                 content: cleanJSON
             })
 

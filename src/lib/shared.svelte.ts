@@ -10,15 +10,15 @@ export const contentExtensions = [
     StarterKit
 ]
 export const getEditorExtensions = (bubbleMenu: HTMLElement) => [
-        ...contentExtensions,
-        BubbleMenu.configure({
-            element: bubbleMenu,
-        }),
-    ]
+    ...contentExtensions,
+    BubbleMenu.configure({
+        element: bubbleMenu,
+    }),
+]
 export const schema = getSchema(contentExtensions);
 
 export const UPPER_AND_LOWER_CASE_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-export const validateAlphanumNExtra = v.regex(/^[a-zA-Z0-9._~-]*$/)
+export const validateAlphanumNExtra = v.regex(/^[a-zA-Z0-9_~-]*$/, 'Alphanumeric & _~- only')
 
 export const MAX_CUSTOM_SLUG_LEN = 32;
 // i do think some people might find 8 a bit annoying and
@@ -27,10 +27,14 @@ export const MIN_CUSTOM_EDIT_CODE_LEN = 6;
 export const MAX_CUSTOM_EDIT_CODE_LEN = 32;
 
 export const postSchema = v.object({
-    slug: v.pipe(v.string(), v.maxLength(MAX_CUSTOM_SLUG_LEN), validateAlphanumNExtra),
+    slug: v.pipe(v.string(), v.maxLength(MAX_CUSTOM_SLUG_LEN, `Maximum ${MAX_CUSTOM_SLUG_LEN} characters`), validateAlphanumNExtra),
     // pro tip: no one will guess ⋆✴︎˚｡⋆✴︎︎ as an edit code
-    edit_code: v.pipe(
-        v.string(),
-        v.maxLength(MAX_CUSTOM_EDIT_CODE_LEN)),
+    _edit_code: v.union([
+        v.literal(''),
+        v.pipe(
+            v.string(),
+            v.minLength(MIN_CUSTOM_EDIT_CODE_LEN, `Minimum ${MIN_CUSTOM_EDIT_CODE_LEN} characters`),
+            v.maxLength(MAX_CUSTOM_EDIT_CODE_LEN, `Maximum ${MAX_CUSTOM_EDIT_CODE_LEN} characters`))
+    ]),
     content: v.pipe(v.string(), v.nonEmpty(), v.transform(JSON.parse))
 })

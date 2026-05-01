@@ -76,10 +76,16 @@
         {/if}
     </div>
 
-    <div bind:this={elem}></div>
+    <div class="content-edit" bind:this={elem}></div>
 </div>
 
-<style lang="scss">
+<style>
+    :global {
+        .tiptap {
+            outline: none !important;
+        }
+    }
+
   .app {
     margin: 2rem;
   }
