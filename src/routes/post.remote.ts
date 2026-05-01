@@ -6,9 +6,11 @@ import {
 } from "$lib/shared.svelte";
 import {invalid, redirect, error as sverror} from "@sveltejs/kit";
 import {customAlphabet} from "nanoid";
-import {ratelimit} from "$lib/serverUtils";
+import {getLimiter} from "$lib/serverUtils";
 
 const generateToken = (len: number) => customAlphabet(UPPER_AND_LOWER_CASE_ALPHABET, len)()
+
+const limiter = getLimiter(5, 60);
 
 // TODO now: validate schema on client
 export const createPost = form(
@@ -16,7 +18,8 @@ export const createPost = form(
     async ({slug, edit_code, content}) => {
         // rate limiting
         const ip = getRequestEvent().getClientAddress();
-        if (await ratelimit(ip, 5, 60)) sverror(429, { message: 'Rate limit exceeded'})
+        const { success } = await limiter.limit(ip)
+        if (!success) sverror(429, { message: 'Rate limit exceeded'})
 
         // slug
         const finalSlug = slug || generateToken(8);
