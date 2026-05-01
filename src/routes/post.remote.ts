@@ -1,33 +1,22 @@
-import {form} from "$app/server";
-import * as v from 'valibot'
+import {form, getRequestEvent} from "$app/server";
 import {supabaseAdmin} from "$lib/utils/supabaseAdminClient";
 import {
-    MAX_CUSTOM_EDIT_CODE_LEN,
-    MAX_CUSTOM_SLUG_LEN,
-    MIN_CUSTOM_EDIT_CODE_LEN,
-    schema,
-    validateAlphanumNExtra
+    MIN_CUSTOM_EDIT_CODE_LEN, postSchema,
+    schema, UPPER_AND_LOWER_CASE_ALPHABET,
 } from "$lib/shared.svelte";
 import {invalid, redirect, error as sverror} from "@sveltejs/kit";
 import {customAlphabet} from "nanoid";
-
-const UPPER_AND_LOWER_CASE_ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+import {ratelimit} from "$lib/serverUtils";
 
 const generateToken = (len: number) => customAlphabet(UPPER_AND_LOWER_CASE_ALPHABET, len)()
 
 // TODO now: validate schema on client
 export const createPost = form(
-    v.object({
-        slug: v.pipe(v.string(), v.maxLength(MAX_CUSTOM_SLUG_LEN), validateAlphanumNExtra),
-        // no one will guess ⋆✴︎˚｡⋆ as an edit code
-        edit_code: v.pipe(
-            v.string(),
-            v.minLength(MIN_CUSTOM_EDIT_CODE_LEN),
-            v.maxLength(MAX_CUSTOM_EDIT_CODE_LEN)),
-        content: v.pipe(v.string(), v.nonEmpty(), v.transform(JSON.parse))
-    }),
+    postSchema,
     async ({slug, edit_code, content}) => {
-        console.log("aaaaaaaaaaaaaa post", slug)
+        // rate limiting
+        const ip = getRequestEvent().getClientAddress();
+        if (await ratelimit(ip, 5, 60)) sverror(429, { message: 'Rate limit exceeded'})
 
         // slug
         const finalSlug = slug || generateToken(8);
@@ -48,6 +37,10 @@ export const createPost = form(
 
         // edit code
         const finalEditCode = edit_code || generateToken(10);
+
+        // TODO now: validate edit code len on client
+        if (edit_code && edit_code.length < MIN_CUSTOM_EDIT_CODE_LEN)
+            return invalid('Edit code too short')
 
         // content
         let checker;
