@@ -44,6 +44,10 @@ body, html {
     display: none;
 }
 
+.d-none-imp {
+    display: none !important;
+}
+
 .d-initial {
     display: initial;
 }

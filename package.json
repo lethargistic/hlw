@@ -34,6 +34,7 @@
 		"@supabase/supabase-js": "^2.101.1",
 		"@tiptap/core": "^3.22.5",
 		"@tiptap/extension-bubble-menu": "^3.22.5",
+		"@tiptap/extensions": "^3.22.5",
 		"@tiptap/pm": "^3.22.5",
 		"@tiptap/starter-kit": "^3.22.5",
 		"@upstash/ratelimit": "^2.0.8",

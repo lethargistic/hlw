@@ -1,7 +1,7 @@
 import {form, getRequestEvent} from "$app/server";
 import {supabaseAdmin} from "$lib/utils/supabaseAdminClient";
 import {
-    MIN_CUSTOM_EDIT_CODE_LEN, postSchema,
+    postSchema,
     schema, UPPER_AND_LOWER_CASE_ALPHABET,
 } from "$lib/shared.svelte";
 import {invalid, redirect, error as sverror} from "@sveltejs/kit";
@@ -18,8 +18,8 @@ export const createPost = form(
     async ({slug, _edit_code, content}, issue) => {
         // rate limiting
         const ip = getRequestEvent().getClientAddress();
-        const { success } = await limiter.limit(ip)
-        if (!success) sverror(429, { message: 'Rate limit exceeded'})
+        const {success} = await limiter.limit(ip)
+        if (!success) sverror(429, {message: 'Rate limit exceeded'})
 
         // slug
         const finalSlug = slug || generateToken(8);
@@ -32,7 +32,7 @@ export const createPost = form(
                 .single()
 
             if (exists) return invalid(issue.slug('Url taken'));
-            if (error && error.code !== 'PGRST116') sverror(500, { message: 'Couldn\'t check slug'} );
+            if (error && error.code !== 'PGRST116') sverror(500, {message: 'Couldn\'t check slug'});
         }
 
         // custom slug

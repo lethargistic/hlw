@@ -2,6 +2,7 @@ import {StarterKit} from "@tiptap/starter-kit";
 import BubbleMenu from "@tiptap/extension-bubble-menu";
 import {getSchema} from "@tiptap/core";
 import * as v from 'valibot'
+import {Placeholder} from "@tiptap/extensions";
 
 export type Nullable<T> = T | null;
 export const absc = <T>(obj: any) => obj as unknown as T;
@@ -11,6 +12,9 @@ export const contentExtensions = [
 ]
 export const getEditorExtensions = (bubbleMenu: HTMLElement) => [
     ...contentExtensions,
+    Placeholder.configure({
+        placeholder: 'Write a thing...'
+    }),
     BubbleMenu.configure({
         element: bubbleMenu,
     }),

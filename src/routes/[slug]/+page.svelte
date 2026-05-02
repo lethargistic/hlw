@@ -1,7 +1,7 @@
 <script lang="ts">
-
+    import CoreEditorPage from "$lib/components/CoreEditorPage.svelte";
+    const {data} = $props();
+    const { slug, content } = $derived(data);
 </script>
 
-<main>
-    hi, i commit taxes
-</main>
+<CoreEditorPage editable={false} {content}/>

@@ -4,6 +4,7 @@
 - [x] todo now: tiptap
 - [ ] todo now: finish editor
 - [ ] todo now: markdown
+- [ ] todo now: maybe save data on page reload (as an option?)
 - [ ] todo now: db
 - [ ] todo cfg: sanitize the html
 - [ ] todo cfg: rate limits
@@ -11,7 +12,7 @@
 - [ ] todo now: accounts
 - [ ] todo now: make title text alternate, come up with a lot of these
 - [ ] todo now: nojs
-- [ ] todo now: think of name ; vlvt.dev
+- [ ] todo now: think of name ; vlvt.dev ; hlw.dev (pray that the domain expires)
 - [ ] todo now: proper full a11y
 - [x] todo now: icon ; maybe edit
 - [x] todo now: cfg credit lucide on icon
