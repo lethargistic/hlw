@@ -124,3 +124,52 @@ html.scroll-lock {
     font-weight: 400;
     font-style: normal;
 }
+
+
+.tooltip {
+    width: max-content;
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-weight: bold;
+    font-size: 90%;
+    opacity: 0.3;
+}
+
+.tooltip > div {
+    background: var(--background-color);
+    color: var(--text-color);
+    border-radius: 2px;
+    padding: 0.25rem 0.3rem;
+    margin-bottom: 0.6rem;
+    border: 2px solid var(--text-color);
+    font-size: 0.85rem;
+    font-weight: normal;
+}
+
+.ui-button {
+    all: unset;
+    cursor: pointer;
+    opacity: 0.3;
+    transition: all 0.2s;
+}
+
+body {
+    --hover-blur: 0.3px;
+    --hover-opacity: 1;
+    --hover-scale: 1.025;
+}
+
+.ui-button:hover {
+    filter: blur(var(--hover-blur));
+    opacity: var(--hover-opacity);
+    transform: scale(var(--hover-scale));
+}
+
+/* vanilla css mixins when */
+
+.highlight-effect {
+    filter: blur(var(--hover-blur));
+    opacity: var(--hover-opacity);
+    transform: scale(var(--hover-scale));
+}

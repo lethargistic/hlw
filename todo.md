@@ -25,10 +25,13 @@
  ; naiu.dev
  ; vilth.com
  ; qiru.dev
- ; iiri.dev ; current pick i guess, maybe mlii?
+ ; iiri.dev
  ; mlii.dev
  ; iluq.dev
  ; ilth.dev
+ ; lwrc.dev  iiri current pick i guess, maybe mlii? ; 
+   ooh could be some pick of lowervase and then making the whole site lowercase but then it's a tad weird as you can write anything and not really 100%-developerish innit 
+   ; i mean, still a good pick tho but mlii doesn't sound so bad now
 - [ ] todo now: proper full a11y
 - [x] todo now: icon ; maybe edit
 - [x] todo now: cfg credit lucide on icon

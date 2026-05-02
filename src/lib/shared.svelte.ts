@@ -3,6 +3,7 @@ import BubbleMenu from "@tiptap/extension-bubble-menu";
 import {getSchema} from "@tiptap/core";
 import * as v from 'valibot'
 import {Placeholder} from "@tiptap/extensions";
+import {computePosition, flip, shift} from "@floating-ui/dom";
 
 export type Nullable<T> = T | null;
 export const absc = <T>(obj: any) => obj as unknown as T;
@@ -42,3 +43,21 @@ export const postSchema = v.object({
     ]),
     content: v.pipe(v.string(), v.nonEmpty(), v.transform(JSON.parse))
 })
+
+export const positionTooltip = (parent: boolean | HTMLElement | null) => {
+    return async (tooltip: HTMLElement) => {
+        if (!tooltip) return;
+        if (parent === null) return;
+        const anchor = parent === true ? tooltip.parentElement : parent;
+        if (!anchor) return;
+
+        const {x, y} = await computePosition(anchor, tooltip, {
+            placement: 'top',
+            middleware: [flip(), shift({padding: 6})]
+        })
+        Object.assign(tooltip.style, {
+            left: `${x}px`,
+            top: `${y}px`
+        })
+    }
+}

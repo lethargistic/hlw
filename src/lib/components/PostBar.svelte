@@ -1,11 +1,12 @@
 <script lang="ts">
     import {createPost} from "../../routes/post.remote.ts";
-    import {postSchema} from "$lib/shared.svelte";
+    import {type Nullable, positionTooltip, postSchema} from "$lib/shared.svelte";
     import type {RemoteFormField} from "@sveltejs/kit";
     import Icon from "$lib/components/icons/Icon.svelte";
+    import {blur} from "svelte/transition";
+    import {cubicInOut} from "svelte/easing";
 
     let {existing, editable = $bindable(false), editorContentEditElem, editorJSON} = $props();
-
 
     const handlePostInputKeys = async (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
@@ -24,12 +25,65 @@
             e.preventDefault();
         }
     }
+
+    // tooltips
+    let tooltipState = $state({text: '', field: ''});
+    const enterTooltip = (text: string, field: string) => {
+        if (text) tooltipState.text = text;
+        tooltipState.field = field;
+    }
+
+    let copyTooltipElem = $state<Nullable<HTMLElement>>(null);
+    let copyTimeoutId = $state<Nullable<NodeJS.Timeout>>(null);
+    const changeCopyTooltip = (text: string, time: number) => {
+        const snapshot = tooltipState.text;
+
+        if (text) tooltipState.text = text;
+
+        // remathing the position
+        if (!copyTooltipElem) return;
+        positionTooltip(true)(copyTooltipElem)
+
+        copyTimeoutId = setTimeout(() => {
+            tooltipState.text = snapshot;
+        }, time)
+    }
+    $effect(() => {
+        if (copyTimeoutId && tooltipState.field === '') clearTimeout(copyTimeoutId)
+    })
+
+    const leaveTooltip = () => {
+        tooltipState.field = '';
+    }
+
+    const copyWithTooltip = async (text: string) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            changeCopyTooltip('copied!', 2000);
+        } catch (err) {
+            console.error('Oh no, failed to copy: ', err);
+        }
+    }
 </script>
 
 {#snippet fieldError(field: RemoteFormField<string>)}
     {#each field.issues() as issue}
         <span class="field-error">{issue.message}</span>
     {/each}
+{/snippet}
+<!--cfg the parent has to set tooltip state as well-->
+{#snippet copyTooltip(text: string, field: string)}
+    <!-- jetbrains fix when -->
+    <!--suppress ALL-->
+    <div bind:this={copyTooltipElem} {@attach positionTooltip(true)}
+         transition:blur={{duration: 100, easing: cubicInOut}}
+         class="tooltip" role="tooltip"
+         onpointerenter={() => enterTooltip('', field)}
+         onpointerleave={leaveTooltip}>
+        <div>
+            {text}
+        </div>
+    </div>
 {/snippet}
 <section class="post-seg">
     {#if !existing}
@@ -64,12 +118,18 @@
         </form>
     {:else if existing && !editable}
         <form class="bar view-bar">
-            <button class="ui-button copy-btn" type="button">
+            <!-- TODO tmrw: make this into a component with html arg because eyesore also animate the tooltip -->
+            <button class="ui-button copy-btn" type="button"
+                    onclick={() => copyWithTooltip(window.location.href)}
+                    onpointerenter={() => enterTooltip('copy link', 'copy-btn')}
+                    onpointerleave={leaveTooltip}>
                 <Icon name="copy"/>
+                {#if tooltipState.field === 'copy-btn'}
+                    {@render copyTooltip(tooltipState.text, 'copy-btn')}
+                {/if}
             </button>
 
-            <!-- TODO now: tooltips waaah-->
-            <button class="lock-btn" type="button">
+            <button class="ui-button lock-btn" type="button">
                 <Icon name="lock"/>
             </button>
             <!-- tooltip -->
@@ -91,18 +151,6 @@
 
             .lock-btn {
                 margin-left: auto;
-            }
-
-            button {
-                all: unset;
-                cursor: pointer;
-                opacity: 0.3;
-                transition: all 0.2s;
-            }
-
-            button:hover {
-                opacity: 1;
-                transform: scale(1.025);
             }
         }
 
