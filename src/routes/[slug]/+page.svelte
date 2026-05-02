@@ -4,4 +4,4 @@
     const { content } = $derived(data);
 </script>
 
-<CoreEditorPage editable={false} {content}/>
+<CoreEditorPage existing={true} {content}/>

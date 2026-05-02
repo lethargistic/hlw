@@ -2,8 +2,10 @@
     import {createPost} from "../../routes/post.remote.ts";
     import {postSchema} from "$lib/shared.svelte";
     import type {RemoteFormField} from "@sveltejs/kit";
+    import Icon from "$lib/components/icons/Icon.svelte";
 
-    let {editable, editorContentEditElem, editorJSON} = $props();
+    let {existing, editable = $bindable(false), editorContentEditElem, editorJSON} = $props();
+
 
     const handlePostInputKeys = async (e: KeyboardEvent) => {
         if (e.key === "ArrowUp") {
@@ -30,8 +32,8 @@
     {/each}
 {/snippet}
 <section class="post-seg">
-    {#if editable}
-        <form class="post-inputs" {...createPost.preflight(postSchema)}
+    {#if !existing}
+        <form class="bar post-bar" {...createPost.preflight(postSchema)}
               oninput={() => createPost.validate()}>
             <label>
                 {@render fieldError(createPost.fields.slug)}
@@ -56,8 +58,28 @@
                 Post
             </button>
         </form>
-    {:else}
-        <form>a</form>
+    {:else if existing && editable}
+        <form class="bar edit-bar">
+
+        </form>
+    {:else if existing && !editable}
+        <form class="bar view-bar">
+            <button class="ui-button copy-btn" type="button">
+                <Icon name="copy"/>
+            </button>
+
+            <!-- TODO now: tooltips waaah-->
+            <button class="lock-btn" type="button">
+                <Icon name="lock"/>
+            </button>
+            <!-- tooltip -->
+            <input type="text"
+                   placeholder="Edit code">
+            <button type="button">
+                Edit
+            </button>
+            <!-- tooltip -->
+        </form>
     {/if}
 </section>
 
@@ -65,8 +87,30 @@
     .post-seg {
         display: grid;
 
-        & .post-inputs {
-            display: flex;
+        & .view-bar {
+
+            .lock-btn {
+                margin-left: auto;
+            }
+
+            button {
+                all: unset;
+                cursor: pointer;
+                opacity: 0.3;
+                transition: all 0.2s;
+            }
+
+            button:hover {
+                opacity: 1;
+                transform: scale(1.025);
+            }
+        }
+
+        & .edit-bar {
+
+        }
+
+        & .post-bar {
             gap: 0.5rem;
 
             --input-height: 1rem;
@@ -87,6 +131,10 @@
             & .post-btn {
                 margin-left: auto;
             }
+        }
+
+        & .bar {
+            display: flex;
         }
     }
 </style>

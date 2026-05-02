@@ -1,9 +1,10 @@
 
 - [ ] todo now: ui
-- [ ] todo maybe: diff history (prosemirror-changeset?)
-- [x] todo now: Editor.js?
+- [ ] todo prod upd: diff history (prosemirror-changeset?) ; i think yeah but it should come as an update
+- [x] todo now: Editor.js? ; no
 - [x] todo now: tiptap
 - [ ] todo now: finish editor
+- [ ] todo now: prevent editor from accidentally closing via alert
 - [ ] todo maybe: markdown
 - [ ] todo now: maybe save data on page reload (as an option?)
 - [ ] todo now: db
@@ -14,6 +15,7 @@
 - [ ] todo now: make title text alternate, come up with a lot of these
 - [ ] todo now: nojs
 - [ ] todo now: think of name 
+- [ ] todo sep maybe: make opacity calculator from bg color and two states 
  ; vlvt.dev 
  ; hlw.dev (pray that the domain expires ; it would be expensive anyway) ; but i could use a variant e.g. hlow
  ; shrip.dev (GOLD!!!! but too silly?)
@@ -23,7 +25,7 @@
  ; naiu.dev
  ; vilth.com
  ; qiru.dev
- ; iiri.dev
+ ; iiri.dev ; current pick i guess, maybe mlii?
  ; mlii.dev
  ; iluq.dev
  ; ilth.dev

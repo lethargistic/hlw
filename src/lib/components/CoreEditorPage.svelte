@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {type Nullable, postSchema} from "$lib/shared.svelte";
+    import {type Nullable} from "$lib/shared.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import Header from "$lib/components/Header.svelte";
     import Footer from "$lib/components/Footer.svelte";
@@ -13,7 +13,7 @@
     // TODO soon: make uneditable page different
     // TODO soon: loading spinner thing for posting/editing
     // TODO soon: toasts??
-    let {editable, content = null} = $props();
+    let {existing, content = null} = $props();
 
     let editorAreaContElem = $state<Nullable<HTMLDivElement>>(null);
     let editorContentEditElem = $state<Nullable<HTMLDivElement>>(null)
@@ -23,6 +23,8 @@
     });
 
     let editorJSON = $state<object | null>();
+
+    let editable = $state(!existing);
 </script>
 
 <div class="full-wrap">
@@ -32,11 +34,11 @@
             <section class="editor-seg">
                 <!-- TODO: 間もなく make placeholders random -->
                 <div class="editor-wrap">
-                    <Editor {editable} {content} bind:elem={editorAreaContElem} bind:editorJSON={editorJSON}/>
+                    <Editor editable={editable} {content} bind:elem={editorAreaContElem} bind:editorJSON={editorJSON}/>
                 </div>
             </section>
 
-            <PostBar {editable} {editorContentEditElem} {editorJSON}/>
+            <PostBar {existing} bind:editable={editable} {editorContentEditElem} {editorJSON}/>
         </main>
         <Footer/>
     </div>
