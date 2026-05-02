@@ -1,10 +1,9 @@
 <script lang="ts">
     import {type Nullable, postSchema} from "$lib/shared.svelte";
     import Editor from "$lib/components/Editor.svelte";
-    import {createPost} from "../../routes/post.remote.ts";
-    import type {RemoteFormField} from "@sveltejs/kit";
     import Header from "$lib/components/Header.svelte";
     import Footer from "$lib/components/Footer.svelte";
+    import PostBar from "$lib/components/PostBar.svelte";
 
     // TODO soon: configure, add more plugins, make it proper
     // TODO soon: i18n
@@ -12,6 +11,8 @@
     // TODO soon: data loading
     // TODO soon: link tool
     // TODO soon: make uneditable page different
+    // TODO soon: loading spinner thing for posting/editing
+    // TODO soon: toasts??
     let {editable, content = null} = $props();
 
     let editorAreaContElem = $state<Nullable<HTMLDivElement>>(null);
@@ -20,24 +21,6 @@
         editorContentEditElem =
             editorAreaContElem?.firstElementChild as Nullable<HTMLDivElement>;
     });
-
-    const handlePostInputKeys = async (e: KeyboardEvent) => {
-        if (e.key === "ArrowUp") {
-            if (!editorContentEditElem) return;
-
-            const range = document.createRange();
-            const selection = window.getSelection();
-
-            editorContentEditElem.focus();
-            range.selectNodeContents(editorContentEditElem);
-            range.collapse(false);
-            if (!selection) return;
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            e.preventDefault();
-        }
-    }
 
     let editorJSON = $state<object | null>();
 </script>
@@ -53,40 +36,7 @@
                 </div>
             </section>
 
-            {#snippet fieldError(field: RemoteFormField<string>)}
-                {#each field.issues() as issue}
-                    <span class="field-error">{issue.message}</span>
-                {/each}
-            {/snippet}
-            <section class="post-seg">
-                <form class="post-inputs" {...createPost.preflight(postSchema)}
-                      oninput={() => createPost.validate()}>
-                    <label>
-                        {@render fieldError(createPost.fields.slug)}
-                        <input onkeydown={handlePostInputKeys}
-                               autocomplete="off"
-                               id="slug-input"
-                               placeholder="Custom url"
-                               {...createPost.fields.slug.as('text')}
-                        >
-                    </label>
-                    <label>
-                        {@render fieldError(createPost.fields._edit_code)}
-                        <input onkeydown={handlePostInputKeys}
-                               autocomplete="off" id="edit-code-input"
-                               placeholder="Custom edit code"
-                               {...createPost.fields._edit_code.as('text')}
-                        >
-                    </label>
-                    <input type="hidden" {...createPost.fields.content.as('text', JSON.stringify(editorJSON))}>
-                    {@render fieldError(createPost.fields.content)}
-                    <button tabindex="0" class="post-btn">
-                        Post
-                    </button>
-                </form>
-
-                <p>Your link: <span>ewewewe</span></p>
-            </section>
+            <PostBar {editable} {editorContentEditElem} {editorJSON}/>
         </main>
         <Footer/>
     </div>
@@ -96,14 +46,6 @@
     .full-wrap {
         display: grid;
         place-items: center;
-
-        & header {
-            display: flex;
-
-            & .account {
-                margin-left: auto;
-            }
-        }
 
         & .inner-wrap {
             max-width: 1024px;
@@ -127,34 +69,6 @@
 
                         white-space: pre-wrap;
                         overflow-wrap: break-word;
-                    }
-                }
-
-                & .post-seg {
-                    display: grid;
-
-                    & .post-inputs {
-                        display: flex;
-                        gap: 0.5rem;
-
-                        --input-height: 1rem;
-
-                        & label {
-                            position: relative;
-                        }
-
-                        & .field-error {
-                            position: absolute;
-                            bottom: calc(var(--input-height) + 0.5rem);
-                        }
-
-                        & post-input {
-                            height: var(--input-height);
-                        }
-
-                        & .post-btn {
-                            margin-left: auto;
-                        }
                     }
                 }
             }

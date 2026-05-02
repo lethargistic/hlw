@@ -12,6 +12,12 @@ const generateToken = (len: number) => customAlphabet(UPPER_AND_LOWER_CASE_ALPHA
 
 const limiter = getLimiter(5, 60);
 
+const getAuthor = () => {
+    // TODO now: get uuid from session
+
+    return 'anonymous';
+}
+
 // TODO now: validate schema on client
 export const createPost = form(
     postSchema,
@@ -52,13 +58,17 @@ export const createPost = form(
         // it's loseless right?
         const cleanJSON = checker.toJSON();
 
+        // author
+        const author = getAuthor();
+
         const {error} = await supabaseAdmin
             .from('posts')
             .insert({
                 slug: finalSlug,
                 custom_slug: customSlug,
                 _edit_code: finalEditCode,
-                content: cleanJSON
+                content: cleanJSON,
+                author: author
             })
 
         if (error) {
